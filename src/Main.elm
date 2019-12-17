@@ -28,8 +28,8 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { width = 400
-      , height = 200
+    ( { width = 1350
+      , height = 600
       , particles = []
       , palette =
             { background = Rgb.rgb 0 0 0
