@@ -23,6 +23,7 @@ type alias Model =
     , height : Int
     , palette : Palette.Palette
     , particles : List Particle
+    , running : Bool
     }
 
 
@@ -43,6 +44,7 @@ init _ =
                 , Rgb.rgb 196 106 251
                 ]
             }
+      , running = True
       }
     , Cmd.none
     )
@@ -54,6 +56,7 @@ type Msg
     | NewParticle Particle
     | UpdateParticles
     | NewVelocity ( Int, Int )
+    | Pause
 
 
 generateParticle : Model -> Cmd Msg
@@ -84,6 +87,9 @@ update msg model =
         NewVelocity ( dvx, dvy ) ->
             ( { model | particles = List.map (Particle.update model.width model.height dvx dvy) model.particles }, Cmd.none )
 
+        Pause ->
+            ( { model | running = not model.running }, Cmd.none )
+
 
 view : Model -> Html Msg
 view model =
@@ -103,11 +109,23 @@ view model =
             )
         , button [ onClick <| GenerateParticles 2000 ] [ text "generate" ]
         , button [ onClick UpdateParticles ] [ text "update" ]
+        , button [ onClick Pause ]
+            [ text <|
+                if model.running then
+                    "pause"
+
+                else
+                    "start"
+            ]
         ]
 
 
 subscriptions model =
-    onAnimationFrameDelta (\_ -> UpdateParticles)
+    if model.running then
+        onAnimationFrameDelta (\_ -> UpdateParticles)
+
+    else
+        Sub.none
 
 
 main =
