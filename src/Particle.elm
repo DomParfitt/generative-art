@@ -21,7 +21,7 @@ type alias Particle =
 
 init : Int -> Point -> Rgb.Rgb -> Particle
 init id origin color =
-    { id = id, vx = 1, vy = 1, size = 1, direction = 0, points = [ [ origin ] ], color = color }
+    { id = id, vx = 1, vy = 1, size = 3, direction = 0, points = [ [ origin ] ], color = color }
 
 
 generate : Int -> Int -> Int -> Palette -> Random.Generator Particle
@@ -48,11 +48,12 @@ currentPosition pss =
 --Maybe.withDefault ( 0, 0 ) <| List.head p.points
 
 
-renderPoints : List Point -> Rgb.Rgb -> Svg msg
-renderPoints ps color =
+renderPoints : List Point -> Rgb.Rgb -> Int -> Svg msg
+renderPoints ps color size =
     polyline
         [ points <| String.join " " <| List.map Point.toString ps
         , stroke <| Rgb.toSvgString color
+        , strokeWidth <| String.fromInt size
         ]
         []
 
@@ -60,7 +61,7 @@ renderPoints ps color =
 render : Particle -> Svg msg
 render p =
     g []
-        (List.map (\points -> renderPoints points p.color) p.points)
+        (List.map (\points -> renderPoints points p.color p.size) p.points)
 
 
 update : Int -> Int -> Int -> Int -> Particle -> Particle

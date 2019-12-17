@@ -101,7 +101,7 @@ view model =
                 []
                 :: List.map Particle.render model.particles
             )
-        , button [ onClick <| GenerateParticles 1 ] [ text "generate" ]
+        , button [ onClick <| GenerateParticles 2000 ] [ text "generate" ]
         , button [ onClick UpdateParticles ] [ text "update" ]
         ]
 
