@@ -24,38 +24,18 @@ init id origin color =
     { id = id, vx = 1, vy = 1, size = 1, direction = 0, points = [ origin ], color = color }
 
 
+generate : Int -> Int -> Int -> Palette -> Random.Generator Particle
+generate id w h p =
+    Point.generate w h |> Random.andThen (\( x, y ) -> Palette.generateColor p |> Random.map (\c -> init id ( x, y ) c))
+
+
 render : Particle -> Svg msg
 render p =
-    let
-        ( x, y ) =
-            Maybe.withDefault ( 0, 0 ) <| List.head p.points
-    in
-    circle
-        [ cx <| String.fromInt <| x
-        , cy <| String.fromInt <| y
-        , r <| String.fromInt p.size
-        , fill <| Rgb.toSvgString p.color
-        ]
-        []
-
-
-renderLine : Particle -> Svg msg
-renderLine p =
     polyline
         [ points <| String.join " " <| Point.toStringList p.points
         , stroke <| Rgb.toSvgString p.color
         ]
         []
-
-
-generateParticle : Int -> Int -> Int -> Palette -> Random.Generator Particle
-generateParticle id w h p =
-    Point.generatePoint w h |> Random.andThen (\( x, y ) -> Palette.generateColor p |> Random.map (\c -> init id ( x, y ) c))
-
-
-updateByDelta : Int -> Int -> Int -> Int
-updateByDelta current delta max =
-    current + delta |> modBy max
 
 
 update : Int -> Int -> Int -> Int -> Particle -> Particle
@@ -83,3 +63,8 @@ update w h dvx dvy p =
 velocity : Int -> Int -> Int
 velocity current delta =
     updateByDelta current delta 2
+
+
+updateByDelta : Int -> Int -> Int -> Int
+updateByDelta current delta max =
+    current + delta |> modBy max

@@ -22,6 +22,6 @@ toStringList ps =
             toString p :: toStringList rest
 
 
-generatePoint : Int -> Int -> Random.Generator Point
-generatePoint a b =
+generate : Int -> Int -> Random.Generator Point
+generate a b =
     Random.pair (Random.int 0 a) (Random.int 0 b)

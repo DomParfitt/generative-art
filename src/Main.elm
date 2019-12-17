@@ -59,7 +59,7 @@ type Msg
 generateParticle : Model -> Cmd Msg
 generateParticle model =
     Random.generate NewParticle
-        (Particle.generateParticle (List.length model.particles) model.width model.height model.palette)
+        (Particle.generate (List.length model.particles) model.width model.height model.palette)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -99,7 +99,7 @@ view model =
                 , fill <| Rgb.toSvgString model.palette.background
                 ]
                 []
-                :: List.map Particle.renderLine model.particles
+                :: List.map Particle.render model.particles
             )
         , button [ onClick <| GenerateParticles 1 ] [ text "generate" ]
         , button [ onClick UpdateParticles ] [ text "update" ]
