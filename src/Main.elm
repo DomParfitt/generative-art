@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Events exposing (onAnimationFrameDelta)
 import Html exposing (Html, button, div)
 import Html.Events exposing (onClick)
 import Palette
@@ -81,7 +82,7 @@ update msg model =
             ( model, Random.generate NewVelocity <| Random.pair (Random.int -1 1) (Random.int -1 1) )
 
         NewVelocity ( dvx, dvy ) ->
-            ( { model | particles = model.particles ++ List.map (Particle.update model.width model.height dvx dvy) model.particles }, Cmd.none )
+            ( { model | particles = List.map (Particle.update model.width model.height dvx dvy) model.particles }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -98,12 +99,16 @@ view model =
                 , fill <| Rgb.toSvgString model.palette.background
                 ]
                 []
-                :: List.map Particle.render model.particles
+                :: List.map Particle.renderLine model.particles
             )
-        , button [ onClick <| GenerateParticles 100 ] [ text "generate" ]
+        , button [ onClick <| GenerateParticles 1 ] [ text "generate" ]
         , button [ onClick UpdateParticles ] [ text "update" ]
         ]
 
 
+subscriptions model =
+    onAnimationFrameDelta (\_ -> UpdateParticles)
+
+
 main =
-    Browser.element { init = init, view = view, update = update, subscriptions = \_ -> Sub.none }
+    Browser.element { init = init, view = view, update = update, subscriptions = subscriptions }

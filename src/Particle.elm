@@ -13,24 +13,46 @@ type alias Particle =
     , vy : Int
     , size : Int
     , direction : Int
-    , x : Int
-    , y : Int
+    , x : List Int
+    , y : List Int
     , color : Rgb.Rgb
     }
 
 
 particle : Int -> Int -> Int -> Rgb.Rgb -> Particle
 particle id x y color =
-    { id = id, vx = 1, vy = 1, size = 1, direction = 0, x = x, y = y, color = color }
+    { id = id, vx = 1, vy = 1, size = 1, direction = 0, x = [ x ], y = [ y ], color = color }
 
 
 render : Particle -> Svg msg
 render p =
     circle
-        [ cx <| String.fromInt <| p.x
-        , cy <| String.fromInt <| p.y
+        [ cx <| String.fromInt <| Maybe.withDefault 0 <| List.head p.x
+        , cy <| String.fromInt <| Maybe.withDefault 0 <| List.head p.y
         , r <| String.fromInt p.size
         , fill <| Rgb.toSvgString p.color
+        ]
+        []
+
+
+pointsString : List Int -> List Int -> List String
+pointsString xs ys =
+    case ( xs, ys ) of
+        ( [], [] ) ->
+            []
+
+        ( x :: xss, y :: yss ) ->
+            [ String.fromInt x ++ "," ++ String.fromInt y ] ++ pointsString xss yss
+
+        ( _, _ ) ->
+            []
+
+
+renderLine : Particle -> Svg msg
+renderLine p =
+    polyline
+        [ points <| String.join " " <| pointsString p.x p.y
+        , stroke <| Rgb.toSvgString p.color
         ]
         []
 
@@ -57,8 +79,8 @@ update w h dvx dvy p =
     , vy = velocity p.vy dvy
     , size = p.size
     , direction = p.direction
-    , x = updateByDelta p.x p.vx w
-    , y = updateByDelta p.y p.vy h
+    , x = updateByDelta (Maybe.withDefault 0 <| List.head p.x) p.vx w :: p.x
+    , y = updateByDelta (Maybe.withDefault 0 <| List.head p.y) p.vy h :: p.y
     , color = p.color
     }
 
