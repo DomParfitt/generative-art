@@ -82,7 +82,7 @@ update w h dvx dvy p =
             Maybe.withDefault [] <| List.tail p.points
 
         points =
-            if (x + newX > w) || (y + newY > h) then
+            if (x + p.vx >= w) || (y + p.vy >= h) then
                 [ ( newX, newY ) ] :: (head :: tail)
 
             else
