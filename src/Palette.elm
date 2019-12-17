@@ -17,8 +17,8 @@ init background colors =
     }
 
 
-generateColor : Palette -> Random.Generator Rgb.Rgb
-generateColor p =
+generate : Palette -> Random.Generator Rgb.Rgb
+generate p =
     Random.map (\x -> pickColorWithDefault (Rgb.invert p.background) x p.colors) (Random.int 0 <| List.length p.colors)
 
 

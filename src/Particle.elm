@@ -26,7 +26,7 @@ init id origin color =
 
 generate : Int -> Int -> Int -> Palette -> Random.Generator Particle
 generate id w h p =
-    Point.generate w h |> Random.andThen (\( x, y ) -> Palette.generateColor p |> Random.map (\c -> init id ( x, y ) c))
+    Point.generate w h |> Random.andThen (\( x, y ) -> Palette.generate p |> Random.map (\c -> init id ( x, y ) c))
 
 
 render : Particle -> Svg msg
